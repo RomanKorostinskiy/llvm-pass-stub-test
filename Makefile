@@ -1,11 +1,10 @@
 # Required packages:
-# Ubuntu 20.04: clang-11 gcc-aarch64-linux-gnu g++-aarch64-linux-gnu qemu-user
-# Ubuntu 18.04 (change 11 to 10): clang-10 gcc-aarch64-linux-gnu g++-aarch64-linux-gnu qemu-user
-CC=clang-11
-CXX=clang++-11
-OPT=opt-11
-LLVM_CONFIG=llvm-config-11
-LLC=llc-11
+# Ubuntu 20.04: clang-12
+CC=clang-12
+CXX=clang++-12
+OPT=opt-12
+LLVM_CONFIG=llvm-config-12
+LLC=llc-12
 
 CFLAGS=-O2 -Werror -Wall -pedantic -fno-inline-functions -fPIC
 LDLIBS=-lm
