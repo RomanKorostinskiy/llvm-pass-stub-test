@@ -9,8 +9,12 @@ LLC=llc-12
 CFLAGS=-O2 -Werror -Wall -pedantic -fno-inline-functions -fPIC
 LDLIBS=-lm
 
-BENCH=binary_trees
-PASS_NAME=fname_printer
+BENCH=tests/binary_trees
+#BENCH=tests/simple_test
+#BENCH=tests/example
+
+PASS_NAME=farguments_counter
+#PASS_NAME=fname_printer
 
 $(PASS_NAME).so: $(PASS_NAME).cpp
 	$(CXX) $(CFLAGS) `$(LLVM_CONFIG) --cxxflags` -shared -fPIC -o $@ $<
