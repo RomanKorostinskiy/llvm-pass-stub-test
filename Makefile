@@ -9,9 +9,9 @@ LLC=llc-12
 CFLAGS=-O2 -Werror -Wall -pedantic -fno-inline-functions -fPIC
 LDLIBS=-lm
 
-BENCH=tests/binary_trees
-#BENCH=tests/simple_test
-#BENCH=tests/example
+BENCH1=tests/binary_trees
+BENCH2=tests/simple_test
+BENCH3=tests/example
 
 PASS_NAME=farguments_counter
 #PASS_NAME=fname_printer
@@ -19,14 +19,30 @@ PASS_NAME=farguments_counter
 $(PASS_NAME).so: $(PASS_NAME).cpp
 	$(CXX) $(CFLAGS) `$(LLVM_CONFIG) --cxxflags` -shared -fPIC -o $@ $<
 
-$(BENCH): $(BENCH).c $(PASS_NAME).so
-	$(CC) $(CFLAGS) -S -emit-llvm -o $(BENCH).orig.ll $<
-	$(OPT) -load ./$(PASS_NAME).so -S -$(PASS_NAME) < $(BENCH).orig.ll > $(BENCH).ll
-	$(LLC) -O2 --relocation-model=pic -o $(BENCH).s $(BENCH).ll
-	$(CC) $(LDLIBS) $(BENCH).s -o $@
+$(BENCH1): $(BENCH1).c $(PASS_NAME).so
+	$(CC) $(CFLAGS) -S -emit-llvm -o $(BENCH1).orig.ll $<
+	$(OPT) -load ./$(PASS_NAME).so -S -$(PASS_NAME) < $(BENCH1).orig.ll > $(BENCH1).ll
+	$(LLC) -O2 --relocation-model=pic -o $(BENCH1).s $(BENCH1).ll
+	$(CC) $(LDLIBS) $(BENCH1).s -o $@
+
+$(BENCH2): $(BENCH2).c $(PASS_NAME).so
+	$(CC) $(CFLAGS) -S -emit-llvm -o $(BENCH2).orig.ll $<
+	$(OPT) -load ./$(PASS_NAME).so -S -$(PASS_NAME) < $(BENCH2).orig.ll > $(BENCH2).ll
+	$(LLC) -O2 --relocation-model=pic -o $(BENCH2).s $(BENCH2).ll
+	$(CC) $(LDLIBS) $(BENCH2).s -o $@
+
+$(BENCH3): $(BENCH3).c $(PASS_NAME).so
+	$(CC) $(CFLAGS) -S -emit-llvm -o $(BENCH3).orig.ll $<
+	$(OPT) -load ./$(PASS_NAME).so -S -$(PASS_NAME) < $(BENCH3).orig.ll > $(BENCH3).ll
+	$(LLC) -O2 --relocation-model=pic -o $(BENCH3).s $(BENCH3).ll
+	$(CC) $(LDLIBS) $(BENCH3).s -o $@
 
 .PHONY: clean
 clean:
-	rm -f $(BENCH) \
+	rm -f $(BENCH1) \
+	      $(BENCH2) \
+	      $(BENCH3) \
 	      $(PASS_NAME).so \
-	      $(BENCH).orig.ll $(BENCH).ll $(BENCH).s
+	      $(BENCH1).orig.ll $(BENCH1).ll $(BENCH1).s \
+	      $(BENCH2).orig.ll $(BENCH2).ll $(BENCH2).s \
+	      $(BENCH3).orig.ll $(BENCH3).ll $(BENCH3).s

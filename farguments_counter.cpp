@@ -17,23 +17,37 @@ struct FArgumentsCounter : public FunctionPass {
   bool runOnFunction(Function &F) override {
     llvm::errs() << "In Function " << F.getName() << ":\n";
 
-    unsigned max_args_amount = 0;
-    Function* called_function;
+    int max_args_amount = -1;
+    Function* called_function = nullptr;
 
     for (auto &BB: F) {
       for (auto &I: BB) {
-        if (I.getOpcode() == Instruction::Call) { //TODO: Add llvm::CallBr comparison
+        if (I.getOpcode() == Instruction::Call) { //TODO: Ignore intrinsic instructions
           CallInst* call_inst = cast<CallInst>(&I);
-          unsigned args_amount = call_inst->arg_size();
+          // llvm::errs() << "\t\t!\n";
+          int args_amount = call_inst->arg_size();
           if (args_amount > max_args_amount) {
             called_function = call_inst->getCalledFunction();
             max_args_amount = args_amount;
+            // if (called_function != nullptr) {
+            //   llvm::errs() << "\t\tFunc: " << called_function->getName() << " args num: " << max_args_amount << "\n";
+            // } else {
+            //   llvm::errs() << "\t\tind call " << "args num: " << max_args_amount << "\n";
+            // }
           }
         }
       }
     }
-    llvm::errs() << '\t' << " Maximum arguments number " << max_args_amount 
-      << " in " << called_function->getName() << " function call " << "\n\n";
+
+    if (max_args_amount == -1) {
+      llvm::errs() << "\tNo calls in this function\n";
+    } else if (called_function == nullptr) {
+      llvm::errs() << '\t' << " Maximum arguments number " << max_args_amount
+        << " in indirect function call " << "\n";
+    } else {
+      llvm::errs() << '\t' << " Maximum arguments number " << max_args_amount
+        << " in " << called_function->getName() << " function call " << "\n";
+    }
 
     return false;
   }

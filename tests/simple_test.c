@@ -20,13 +20,13 @@ int foo4(int a) {
 } /* foo4() */
 
 int main(int argc, char* argv[]) {
-	int (*bar)(int);
+	// int (*bar)(int);
 
 	foo1(1);
 	foo2(1);
 
-	bar = foo3;
-	bar(1);
+	// bar = foo3;
+	// bar(1);
 
 	return 0;
 } /* main() */
