@@ -5,7 +5,7 @@ int bar(int x, int y) {
     return 2;
 }
 int bar1(int x, int y, int z, int a) {
-    return 2;
+    return bar(1, 2);
 }
 
 int qq(double x, int (*fp)(int, int, int)) {

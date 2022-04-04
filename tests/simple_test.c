@@ -1,32 +1,32 @@
-#include <malloc.h>
-#include <math.h>
-#include <stdio.h>
+#include <emmintrin.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <immintrin.h>
 
 int foo1(int a) {
 	return 2;
-} /* foo1() */
+}
 
 int foo2(int a) {
-	return 3;
-} /* foo2() */
+	return foo1(1);
+}
 
 int foo3(int a) {
 	return 1;
-} /* foo3() */
+}
 
 int foo4(int a) {
-	return 1;
-} /* foo4() */
+	return foo1(1);
+}
 
 int main(int argc, char* argv[]) {
-	// int (*bar)(int);
+	// __m128i m = _mm_set_ps (3, 2, 1, 0);
+	// int* data = (int*)calloc(4, sizeof(int));
+	// _mm_store_epi32 (data, m);
 
-	foo1(1);
-	foo2(1);
+	// for (int i = 0; i < 4; i++) {
+	// 	printf("%d\n", data[i]);
+	// }
 
-	// bar = foo3;
-	// bar(1);
-
-	return 0;
-} /* main() */
+	return 	foo1(1) + foo2(1);
+}
