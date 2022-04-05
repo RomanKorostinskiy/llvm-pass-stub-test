@@ -36,7 +36,7 @@ struct FArgumentsLimiter : public FunctionPass {
       for (auto &I: BB) {
         if (I.getOpcode() == Instruction::Call) { //TODO: Handle with intrinsic instructions
           CallInst* call_inst = cast<CallInst>(&I);
-          int args_amount = call_inst->arg_size();
+          unsigned args_amount = call_inst->arg_size();
           if (args_amount > ArgsLimit) {
             llvm::errs() << "In Function " << F.getName() << ":\n";
             PrintLimitExceedingMessage(call_inst->getCalledFunction());
