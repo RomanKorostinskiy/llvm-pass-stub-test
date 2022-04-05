@@ -34,7 +34,7 @@ struct FArgumentsLimiter : public FunctionPass {
   bool runOnFunction(Function &F) override {
     for (auto &BB: F) {
       for (auto &I: BB) {
-        if (I.getOpcode() == Instruction::Call) { //TODO: Handle with intrinsic instructions
+        if (I.getOpcode() == Instruction::Call) {
           CallInst* call_inst = cast<CallInst>(&I);
           unsigned args_amount = call_inst->arg_size();
           if (args_amount > ArgsLimit) {

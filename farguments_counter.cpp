@@ -20,7 +20,7 @@ struct FArgumentsCounter : public FunctionPass {
 
     for (auto &BB: F) {
       for (auto &I: BB) {
-        if (I.getOpcode() == Instruction::Call) { //TODO: Handle with intrinsic instructions
+        if (I.getOpcode() == Instruction::Call) {
           CallInst* call_inst = cast<CallInst>(&I);
           int args_amount = call_inst->arg_size();
           if (args_amount > max_args_amount) {
@@ -32,7 +32,7 @@ struct FArgumentsCounter : public FunctionPass {
     }
 
     llvm::errs() << "In Function " << F.getName() << ":\n";
-    
+
     if (max_args_amount == -1) {
       llvm::errs() << "\tNo calls in this function\n";
     } else if (called_function == nullptr) {

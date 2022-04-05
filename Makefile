@@ -6,16 +6,16 @@ OPT=opt-12
 LLVM_CONFIG=llvm-config-12
 LLC=llc-12
 
-CFLAGS=-O0 -Werror -Wall -pedantic -fno-inline-functions -fPIC
+CFLAGS=-O3 -Werror -Wall -pedantic -fno-inline-functions -fPIC
 LDLIBS=-lm
 
 # BENCH=tests/binary_trees
-# BENCH=tests/simple_test
+# BENCH=tests/intrinsics
 BENCH=tests/example
 
 # PASS_NAME=fname_printer
-# PASS_NAME=farguments_counter
-PASS_NAME=farguments_limiter
+PASS_NAME=farguments_counter
+# PASS_NAME=farguments_limiter
 
 ARGSLIM=2
 
@@ -37,4 +37,4 @@ endif
 clean:
 	rm -f $(BENCH) \
 	      $(PASS_NAME).so \
-	      $(BENCH).orig.ll $(BENCH).ll $(BENCH).s 
+	      $(BENCH).orig.ll $(BENCH).s
