@@ -1,3 +1,5 @@
+#include <math.h>
+
 int foo(int x) {
     return 1;
 }
@@ -6,6 +8,9 @@ int bar(int x, int y) {
 }
 int bar1(int x, int y, int z, int a) {
     return bar(1, 2);
+}
+int foo1(int x) {
+    return sqrt(x);
 }
 
 int qq(double x, int (*fp)(int, int, int)) {

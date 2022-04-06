@@ -18,5 +18,5 @@ int main() {
 
 	int mask = _mm_movemask_epi8 (cmp);
 
-	return 	mask;
+	return mask;
 }
