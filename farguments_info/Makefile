@@ -6,12 +6,13 @@ OPT=opt-12
 LLVM_CONFIG=llvm-config-12
 LLC=llc-12
 
-CFLAGS=-O3 -Werror -Wall -pedantic -fno-inline-functions -fPIC
+CFLAGS=-O2 -Werror -Wall -pedantic -fno-inline-functions -fPIC
 LDLIBS=-lm
 
-BENCH=binary_trees
+# BENCH=binary_trees
 # BENCH=intrinsics
 # BENCH=example
+BENCH=llvm_intrinsics
 
 BENCH_PATH=../tests/$(BENCH)
 
@@ -21,7 +22,6 @@ ARGSLIM=-1
 
 $(PASS_NAME).so: $(PASS_NAME).cpp
 	$(CXX) $(CFLAGS) `$(LLVM_CONFIG) --cxxflags` -shared -fPIC -o $@ $<
-
 
 $(BENCH): $(BENCH_PATH).c $(PASS_NAME).so
 	$(CC) $(CFLAGS) -S -emit-llvm -o $(BENCH_PATH).orig.ll $<

@@ -9,159 +9,269 @@ target triple = "x86_64-pc-linux-gnu"
 @.str.1 = private unnamed_addr constant [36 x i8] c"%li\09 trees of depth %u\09 check: %li\0A\00", align 1
 @.str.2 = private unnamed_addr constant [41 x i8] c"long lived tree of depth %u\09 check: %li\0A\00", align 1
 
-; Function Attrs: nofree noinline nounwind uwtable willreturn
-define noalias %struct.tn* @NewTreeNode(%struct.tn* %0, %struct.tn* %1) local_unnamed_addr #0 {
-  %3 = tail call noalias dereferenceable_or_null(16) i8* @malloc(i64 16) #8
-  %4 = bitcast i8* %3 to %struct.tn*
-  %5 = bitcast i8* %3 to %struct.tn**
-  store %struct.tn* %0, %struct.tn** %5, align 8, !tbaa !3
-  %6 = getelementptr inbounds i8, i8* %3, i64 8
-  %7 = bitcast i8* %6 to %struct.tn**
-  store %struct.tn* %1, %struct.tn** %7, align 8, !tbaa !8
-  ret %struct.tn* %4
+; Function Attrs: noinline nounwind optnone uwtable
+define %struct.tn* @NewTreeNode(%struct.tn* %0, %struct.tn* %1) #0 {
+  %3 = alloca %struct.tn*, align 8
+  %4 = alloca %struct.tn*, align 8
+  %5 = alloca %struct.tn*, align 8
+  store %struct.tn* %0, %struct.tn** %3, align 8
+  store %struct.tn* %1, %struct.tn** %4, align 8
+  %6 = call noalias i8* @malloc(i64 16) #4
+  %7 = bitcast i8* %6 to %struct.tn*
+  store %struct.tn* %7, %struct.tn** %5, align 8
+  %8 = load %struct.tn*, %struct.tn** %3, align 8
+  %9 = load %struct.tn*, %struct.tn** %5, align 8
+  %10 = getelementptr inbounds %struct.tn, %struct.tn* %9, i32 0, i32 0
+  store %struct.tn* %8, %struct.tn** %10, align 8
+  %11 = load %struct.tn*, %struct.tn** %4, align 8
+  %12 = load %struct.tn*, %struct.tn** %5, align 8
+  %13 = getelementptr inbounds %struct.tn, %struct.tn* %12, i32 0, i32 1
+  store %struct.tn* %11, %struct.tn** %13, align 8
+  %14 = load %struct.tn*, %struct.tn** %5, align 8
+  ret %struct.tn* %14
 }
 
-; Function Attrs: inaccessiblememonly nofree nounwind willreturn
-declare noalias noundef i8* @malloc(i64) local_unnamed_addr #1
+; Function Attrs: nounwind
+declare noalias i8* @malloc(i64) #1
 
-; Function Attrs: noinline nounwind readonly uwtable
-define i64 @ItemCheck(%struct.tn* nocapture readonly %0) local_unnamed_addr #2 {
-  %2 = getelementptr inbounds %struct.tn, %struct.tn* %0, i64 0, i32 0
-  %3 = load %struct.tn*, %struct.tn** %2, align 8, !tbaa !3
-  %4 = icmp eq %struct.tn* %3, null
-  br i1 %4, label %19, label %5
-
-5:                                                ; preds = %5, %1
-  %6 = phi %struct.tn* [ %15, %5 ], [ %3, %1 ]
-  %7 = phi %struct.tn* [ %11, %5 ], [ %0, %1 ]
-  %8 = phi i64 [ %13, %5 ], [ 0, %1 ]
-  %9 = tail call i64 @ItemCheck(%struct.tn* nonnull %6)
-  %10 = getelementptr inbounds %struct.tn, %struct.tn* %7, i64 0, i32 1
-  %11 = load %struct.tn*, %struct.tn** %10, align 8, !tbaa !8
-  %12 = add i64 %8, 1
-  %13 = add i64 %12, %9
-  %14 = getelementptr inbounds %struct.tn, %struct.tn* %11, i64 0, i32 0
-  %15 = load %struct.tn*, %struct.tn** %14, align 8, !tbaa !3
-  %16 = icmp eq %struct.tn* %15, null
-  br i1 %16, label %17, label %5
-
-17:                                               ; preds = %5
-  %18 = add i64 %13, 1
-  br label %19
-
-19:                                               ; preds = %17, %1
-  %20 = phi i64 [ 1, %1 ], [ %18, %17 ]
-  ret i64 %20
-}
-
-; Function Attrs: nofree noinline nounwind uwtable
-define noalias %struct.tn* @BottomUpTree(i32 %0) local_unnamed_addr #3 {
-  %2 = icmp eq i32 %0, 0
-  br i1 %2, label %8, label %3
-
-3:                                                ; preds = %1
-  %4 = add i32 %0, -1
-  %5 = tail call %struct.tn* @BottomUpTree(i32 %4)
-  %6 = tail call %struct.tn* @BottomUpTree(i32 %4)
-  %7 = tail call %struct.tn* @NewTreeNode(%struct.tn* %5, %struct.tn* %6)
-  ret %struct.tn* %7
+; Function Attrs: noinline nounwind optnone uwtable
+define i64 @ItemCheck(%struct.tn* %0) #0 {
+  %2 = alloca i64, align 8
+  %3 = alloca %struct.tn*, align 8
+  store %struct.tn* %0, %struct.tn** %3, align 8
+  %4 = load %struct.tn*, %struct.tn** %3, align 8
+  %5 = getelementptr inbounds %struct.tn, %struct.tn* %4, i32 0, i32 0
+  %6 = load %struct.tn*, %struct.tn** %5, align 8
+  %7 = icmp eq %struct.tn* %6, null
+  br i1 %7, label %8, label %9
 
 8:                                                ; preds = %1
-  %9 = tail call %struct.tn* @NewTreeNode(%struct.tn* null, %struct.tn* null)
-  ret %struct.tn* %9
+  store i64 1, i64* %2, align 8
+  br label %20
+
+9:                                                ; preds = %1
+  %10 = load %struct.tn*, %struct.tn** %3, align 8
+  %11 = getelementptr inbounds %struct.tn, %struct.tn* %10, i32 0, i32 0
+  %12 = load %struct.tn*, %struct.tn** %11, align 8
+  %13 = call i64 @ItemCheck(%struct.tn* %12)
+  %14 = add nsw i64 1, %13
+  %15 = load %struct.tn*, %struct.tn** %3, align 8
+  %16 = getelementptr inbounds %struct.tn, %struct.tn* %15, i32 0, i32 1
+  %17 = load %struct.tn*, %struct.tn** %16, align 8
+  %18 = call i64 @ItemCheck(%struct.tn* %17)
+  %19 = add nsw i64 %14, %18
+  store i64 %19, i64* %2, align 8
+  br label %20
+
+20:                                               ; preds = %9, %8
+  %21 = load i64, i64* %2, align 8
+  ret i64 %21
 }
 
-; Function Attrs: noinline nounwind uwtable
-define void @DeleteTree(%struct.tn* nocapture %0) local_unnamed_addr #4 {
-  %2 = getelementptr inbounds %struct.tn, %struct.tn* %0, i64 0, i32 0
-  %3 = load %struct.tn*, %struct.tn** %2, align 8, !tbaa !3
-  %4 = icmp eq %struct.tn* %3, null
-  br i1 %4, label %8, label %5
+; Function Attrs: noinline nounwind optnone uwtable
+define %struct.tn* @BottomUpTree(i32 %0) #0 {
+  %2 = alloca %struct.tn*, align 8
+  %3 = alloca i32, align 4
+  store i32 %0, i32* %3, align 4
+  %4 = load i32, i32* %3, align 4
+  %5 = icmp ugt i32 %4, 0
+  br i1 %5, label %6, label %14
 
-5:                                                ; preds = %1
-  tail call void @DeleteTree(%struct.tn* nonnull %3)
-  %6 = getelementptr inbounds %struct.tn, %struct.tn* %0, i64 0, i32 1
-  %7 = load %struct.tn*, %struct.tn** %6, align 8, !tbaa !8
-  tail call void @DeleteTree(%struct.tn* %7)
-  br label %8
+6:                                                ; preds = %1
+  %7 = load i32, i32* %3, align 4
+  %8 = sub i32 %7, 1
+  %9 = call %struct.tn* @BottomUpTree(i32 %8)
+  %10 = load i32, i32* %3, align 4
+  %11 = sub i32 %10, 1
+  %12 = call %struct.tn* @BottomUpTree(i32 %11)
+  %13 = call %struct.tn* @NewTreeNode(%struct.tn* %9, %struct.tn* %12)
+  store %struct.tn* %13, %struct.tn** %2, align 8
+  br label %16
 
-8:                                                ; preds = %5, %1
-  %9 = bitcast %struct.tn* %0 to i8*
-  tail call void @free(i8* %9) #8
+14:                                               ; preds = %1
+  %15 = call %struct.tn* @NewTreeNode(%struct.tn* null, %struct.tn* null)
+  store %struct.tn* %15, %struct.tn** %2, align 8
+  br label %16
+
+16:                                               ; preds = %14, %6
+  %17 = load %struct.tn*, %struct.tn** %2, align 8
+  ret %struct.tn* %17
+}
+
+; Function Attrs: noinline nounwind optnone uwtable
+define void @DeleteTree(%struct.tn* %0) #0 {
+  %2 = alloca %struct.tn*, align 8
+  store %struct.tn* %0, %struct.tn** %2, align 8
+  %3 = load %struct.tn*, %struct.tn** %2, align 8
+  %4 = getelementptr inbounds %struct.tn, %struct.tn* %3, i32 0, i32 0
+  %5 = load %struct.tn*, %struct.tn** %4, align 8
+  %6 = icmp ne %struct.tn* %5, null
+  br i1 %6, label %7, label %14
+
+7:                                                ; preds = %1
+  %8 = load %struct.tn*, %struct.tn** %2, align 8
+  %9 = getelementptr inbounds %struct.tn, %struct.tn* %8, i32 0, i32 0
+  %10 = load %struct.tn*, %struct.tn** %9, align 8
+  call void @DeleteTree(%struct.tn* %10)
+  %11 = load %struct.tn*, %struct.tn** %2, align 8
+  %12 = getelementptr inbounds %struct.tn, %struct.tn* %11, i32 0, i32 1
+  %13 = load %struct.tn*, %struct.tn** %12, align 8
+  call void @DeleteTree(%struct.tn* %13)
+  br label %14
+
+14:                                               ; preds = %7, %1
+  %15 = load %struct.tn*, %struct.tn** %2, align 8
+  %16 = bitcast %struct.tn* %15 to i8*
+  call void @free(i8* %16) #4
   ret void
 }
 
-; Function Attrs: inaccessiblemem_or_argmemonly nounwind willreturn
-declare void @free(i8* nocapture noundef) local_unnamed_addr #5
+; Function Attrs: nounwind
+declare void @free(i8*) #1
 
-; Function Attrs: noinline nounwind uwtable
-define i32 @main(i32 %0, i8** nocapture readonly %1) local_unnamed_addr #4 {
-  %3 = getelementptr inbounds i8*, i8** %1, i64 1
-  %4 = load i8*, i8** %3, align 8, !tbaa !9
-  %5 = tail call i64 @atol(i8* %4) #9
-  %6 = trunc i64 %5 to i32
-  %7 = icmp ugt i32 %6, 6
-  %8 = select i1 %7, i32 %6, i32 6
-  %9 = add i32 %8, 1
-  %10 = tail call %struct.tn* @BottomUpTree(i32 %9)
-  %11 = tail call i64 @ItemCheck(%struct.tn* %10)
-  %12 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([38 x i8], [38 x i8]* @.str, i64 0, i64 0), i32 %9, i64 %11)
-  tail call void @DeleteTree(%struct.tn* %10)
-  %13 = tail call %struct.tn* @BottomUpTree(i32 %8)
-  %14 = add i32 %8, 4
-  br label %15
+; Function Attrs: noinline nounwind optnone uwtable
+define i32 @main(i32 %0, i8** %1) #0 {
+  %3 = alloca i32, align 4
+  %4 = alloca i32, align 4
+  %5 = alloca i8**, align 8
+  %6 = alloca i32, align 4
+  %7 = alloca i32, align 4
+  %8 = alloca i32, align 4
+  %9 = alloca i32, align 4
+  %10 = alloca i32, align 4
+  %11 = alloca %struct.tn*, align 8
+  %12 = alloca %struct.tn*, align 8
+  %13 = alloca %struct.tn*, align 8
+  %14 = alloca i64, align 8
+  %15 = alloca i64, align 8
+  %16 = alloca i64, align 8
+  store i32 0, i32* %3, align 4
+  store i32 %0, i32* %4, align 4
+  store i8** %1, i8*** %5, align 8
+  %17 = load i8**, i8*** %5, align 8
+  %18 = getelementptr inbounds i8*, i8** %17, i64 1
+  %19 = load i8*, i8** %18, align 8
+  %20 = call i64 @atol(i8* %19) #5
+  %21 = trunc i64 %20 to i32
+  store i32 %21, i32* %6, align 4
+  store i32 4, i32* %8, align 4
+  %22 = load i32, i32* %8, align 4
+  %23 = add i32 %22, 2
+  %24 = load i32, i32* %6, align 4
+  %25 = icmp ugt i32 %23, %24
+  br i1 %25, label %26, label %29
 
-15:                                               ; preds = %30, %2
-  %16 = phi i32 [ 4, %2 ], [ %33, %30 ]
-  %17 = sub i32 %14, %16
-  %18 = uitofp i32 %17 to double
-  %19 = tail call double @exp2(double %18) #8
-  %20 = fptosi double %19 to i64
-  %21 = icmp slt i64 %20, 1
-  br i1 %21, label %30, label %22
+26:                                               ; preds = %2
+  %27 = load i32, i32* %8, align 4
+  %28 = add i32 %27, 2
+  store i32 %28, i32* %9, align 4
+  br label %31
 
-22:                                               ; preds = %22, %15
-  %23 = phi i64 [ %27, %22 ], [ 0, %15 ]
-  %24 = phi i64 [ %28, %22 ], [ 1, %15 ]
-  %25 = tail call %struct.tn* @BottomUpTree(i32 %16)
-  %26 = tail call i64 @ItemCheck(%struct.tn* %25)
-  %27 = add nsw i64 %26, %23
-  tail call void @DeleteTree(%struct.tn* %25)
-  %28 = add nuw i64 %24, 1
-  %29 = icmp eq i64 %24, %20
-  br i1 %29, label %30, label %22, !llvm.loop !10
+29:                                               ; preds = %2
+  %30 = load i32, i32* %6, align 4
+  store i32 %30, i32* %9, align 4
+  br label %31
 
-30:                                               ; preds = %22, %15
-  %31 = phi i64 [ 0, %15 ], [ %27, %22 ]
-  %32 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 %20, i32 %16, i64 %31)
-  %33 = add i32 %16, 2
-  %34 = icmp ult i32 %8, %33
-  br i1 %34, label %35, label %15, !llvm.loop !12
+31:                                               ; preds = %29, %26
+  %32 = load i32, i32* %9, align 4
+  %33 = add i32 %32, 1
+  store i32 %33, i32* %10, align 4
+  %34 = load i32, i32* %10, align 4
+  %35 = call %struct.tn* @BottomUpTree(i32 %34)
+  store %struct.tn* %35, %struct.tn** %11, align 8
+  %36 = load i32, i32* %10, align 4
+  %37 = load %struct.tn*, %struct.tn** %11, align 8
+  %38 = call i64 @ItemCheck(%struct.tn* %37)
+  %39 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([38 x i8], [38 x i8]* @.str, i64 0, i64 0), i32 %36, i64 %38)
+  %40 = load %struct.tn*, %struct.tn** %11, align 8
+  call void @DeleteTree(%struct.tn* %40)
+  %41 = load i32, i32* %9, align 4
+  %42 = call %struct.tn* @BottomUpTree(i32 %41)
+  store %struct.tn* %42, %struct.tn** %12, align 8
+  %43 = load i32, i32* %8, align 4
+  store i32 %43, i32* %7, align 4
+  br label %44
 
-35:                                               ; preds = %30
-  %36 = tail call i64 @ItemCheck(%struct.tn* %13)
-  %37 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1) getelementptr inbounds ([41 x i8], [41 x i8]* @.str.2, i64 0, i64 0), i32 %8, i64 %36)
+44:                                               ; preds = %77, %31
+  %45 = load i32, i32* %7, align 4
+  %46 = load i32, i32* %9, align 4
+  %47 = icmp ule i32 %45, %46
+  br i1 %47, label %48, label %80
+
+48:                                               ; preds = %44
+  %49 = load i32, i32* %9, align 4
+  %50 = load i32, i32* %7, align 4
+  %51 = sub i32 %49, %50
+  %52 = load i32, i32* %8, align 4
+  %53 = add i32 %51, %52
+  %54 = uitofp i32 %53 to double
+  %55 = call double @pow(double 2.000000e+00, double %54) #4
+  %56 = fptosi double %55 to i64
+  store i64 %56, i64* %15, align 8
+  store i64 0, i64* %16, align 8
+  store i64 1, i64* %14, align 8
+  br label %57
+
+57:                                               ; preds = %69, %48
+  %58 = load i64, i64* %14, align 8
+  %59 = load i64, i64* %15, align 8
+  %60 = icmp sle i64 %58, %59
+  br i1 %60, label %61, label %72
+
+61:                                               ; preds = %57
+  %62 = load i32, i32* %7, align 4
+  %63 = call %struct.tn* @BottomUpTree(i32 %62)
+  store %struct.tn* %63, %struct.tn** %13, align 8
+  %64 = load %struct.tn*, %struct.tn** %13, align 8
+  %65 = call i64 @ItemCheck(%struct.tn* %64)
+  %66 = load i64, i64* %16, align 8
+  %67 = add nsw i64 %66, %65
+  store i64 %67, i64* %16, align 8
+  %68 = load %struct.tn*, %struct.tn** %13, align 8
+  call void @DeleteTree(%struct.tn* %68)
+  br label %69
+
+69:                                               ; preds = %61
+  %70 = load i64, i64* %14, align 8
+  %71 = add nsw i64 %70, 1
+  store i64 %71, i64* %14, align 8
+  br label %57, !llvm.loop !3
+
+72:                                               ; preds = %57
+  %73 = load i64, i64* %15, align 8
+  %74 = load i32, i32* %7, align 4
+  %75 = load i64, i64* %16, align 8
+  %76 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 %73, i32 %74, i64 %75)
+  br label %77
+
+77:                                               ; preds = %72
+  %78 = load i32, i32* %7, align 4
+  %79 = add i32 %78, 2
+  store i32 %79, i32* %7, align 4
+  br label %44, !llvm.loop !5
+
+80:                                               ; preds = %44
+  %81 = load i32, i32* %9, align 4
+  %82 = load %struct.tn*, %struct.tn** %12, align 8
+  %83 = call i64 @ItemCheck(%struct.tn* %82)
+  %84 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([41 x i8], [41 x i8]* @.str.2, i64 0, i64 0), i32 %81, i64 %83)
   ret i32 0
 }
 
-; Function Attrs: noinline nounwind readonly uwtable willreturn
-declare i64 @atol(i8* nonnull) local_unnamed_addr #6
+; Function Attrs: nounwind readonly willreturn
+declare i64 @atol(i8*) #2
 
-; Function Attrs: nofree nounwind
-declare noundef i32 @printf(i8* nocapture noundef readonly, ...) local_unnamed_addr #7
+declare i32 @printf(i8*, ...) #3
 
-declare double @exp2(double) local_unnamed_addr
+; Function Attrs: nounwind
+declare double @pow(double, double) #1
 
-attributes #0 = { nofree noinline nounwind uwtable willreturn "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #1 = { inaccessiblememonly nofree nounwind willreturn "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #2 = { noinline nounwind readonly uwtable "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #3 = { nofree noinline nounwind uwtable "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #4 = { noinline nounwind uwtable "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #5 = { inaccessiblemem_or_argmemonly nounwind willreturn "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #6 = { noinline nounwind readonly uwtable willreturn "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #7 = { nofree nounwind "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #8 = { nounwind }
-attributes #9 = { nounwind readonly willreturn }
+attributes #0 = { noinline nounwind optnone uwtable "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #1 = { nounwind "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #2 = { nounwind readonly willreturn "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #3 = { "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #4 = { nounwind }
+attributes #5 = { nounwind readonly willreturn }
 
 !llvm.module.flags = !{!0, !1}
 !llvm.ident = !{!2}
@@ -169,13 +279,6 @@ attributes #9 = { nounwind readonly willreturn }
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{!"Ubuntu clang version 12.0.0-3ubuntu1~20.04.5"}
-!3 = !{!4, !5, i64 0}
-!4 = !{!"tn", !5, i64 0, !5, i64 8}
-!5 = !{!"any pointer", !6, i64 0}
-!6 = !{!"omnipotent char", !7, i64 0}
-!7 = !{!"Simple C/C++ TBAA"}
-!8 = !{!4, !5, i64 8}
-!9 = !{!5, !5, i64 0}
-!10 = distinct !{!10, !11}
-!11 = !{!"llvm.loop.mustprogress"}
-!12 = distinct !{!12, !11}
+!3 = distinct !{!3, !4}
+!4 = !{!"llvm.loop.mustprogress"}
+!5 = distinct !{!5, !4}
