@@ -5,7 +5,7 @@ target triple = "x86_64-pc-linux-gnu"
 
 @.str = private unnamed_addr constant [3 x i8] c"%d\00", align 1
 
-; Function Attrs: nofree noinline nounwind uwtable
+; Function Attrs: noinline nounwind uwtable
 define i32 @main() local_unnamed_addr #0 {
   %1 = alloca <4 x i32>, align 16
   %2 = alloca <4 x i32>, align 16
@@ -32,10 +32,10 @@ define i32 @main() local_unnamed_addr #0 {
   %19 = getelementptr inbounds <4 x i32>, <4 x i32>* %2, i64 0, i64 3
   %20 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32* nonnull %19)
   %21 = load <4 x i32>, <4 x i32>* %1, align 16, !tbaa !3
-  %22 = shufflevector <4 x i32> %21, <4 x i32> poison, <4 x i32> <i32 3, i32 2, i32 1, i32 0>
+  %22 = shufflevector <4 x i32> %21, <4 x i32> undef, <4 x i32> <i32 3, i32 2, i32 1, i32 0>
   %23 = sitofp <4 x i32> %22 to <4 x float>
   %24 = load <4 x i32>, <4 x i32>* %2, align 16, !tbaa !3
-  %25 = shufflevector <4 x i32> %24, <4 x i32> poison, <4 x i32> <i32 3, i32 2, i32 1, i32 0>
+  %25 = shufflevector <4 x i32> %24, <4 x i32> undef, <4 x i32> <i32 3, i32 2, i32 1, i32 0>
   %26 = sitofp <4 x i32> %25 to <4 x float>
   %27 = bitcast <4 x float> %23 to <4 x i32>
   %28 = bitcast <4 x float> %26 to <4 x i32>
@@ -57,15 +57,15 @@ declare void @llvm.lifetime.start.p0i8(i64 immarg, i8* nocapture) #1
 declare void @llvm.memset.p0i8.i64(i8* nocapture writeonly, i8, i64, i1 immarg) #2
 
 ; Function Attrs: nofree nounwind
-declare noundef i32 @__isoc99_scanf(i8* nocapture noundef readonly, ...) local_unnamed_addr #3
+declare i32 @__isoc99_scanf(i8* nocapture readonly, ...) local_unnamed_addr #3
 
 ; Function Attrs: argmemonly nofree nosync nounwind willreturn
 declare void @llvm.lifetime.end.p0i8(i64 immarg, i8* nocapture) #1
 
-attributes #0 = { nofree noinline nounwind uwtable "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "min-legal-vector-width"="128" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #0 = { noinline nounwind uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "min-legal-vector-width"="128" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #1 = { argmemonly nofree nosync nounwind willreturn }
 attributes #2 = { argmemonly nofree nosync nounwind willreturn writeonly }
-attributes #3 = { nofree nounwind "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #3 = { nofree nounwind "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #4 = { nounwind }
 
 !llvm.module.flags = !{!0, !1}
@@ -73,7 +73,7 @@ attributes #4 = { nounwind }
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
-!2 = !{!"Ubuntu clang version 12.0.0-3ubuntu1~20.04.5"}
+!2 = !{!"clang version 10.0.0-4ubuntu1 "}
 !3 = !{!4, !4, i64 0}
 !4 = !{!"int", !5, i64 0}
 !5 = !{!"omnipotent char", !6, i64 0}

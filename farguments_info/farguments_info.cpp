@@ -9,6 +9,7 @@
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 
 #include "llvm/Support/CommandLine.h"
+#include "llvm/Support/Casting.h"
 // #include "llvm/Support/Error.h"
 #include "stdlib.h"
 // #include "sstream"
@@ -26,8 +27,8 @@ static cl::opt<int>
 
 namespace {
 
-bool isAssumeLikeIntrinsic(IntrinsicInst* Intrinsic) { //TODO: fix calling this method from the library
-  switch (Intrinsic->getIntrinsicID()) {
+bool isAssumeLikeIntrinsic(Intrinsic::ID intr_id) { //TODO: fix calling this method from the library
+  switch (intr_id) {
   default: break;
   case Intrinsic::assume:
   case Intrinsic::sideeffect:
@@ -67,17 +68,24 @@ struct FArgumentsInfo : public FunctionPass {
     }
   }
 
-  void GenerateCallInstructionMessage(CallInst* I, std::string &msg_str) { //TODO: make simple instruction generation
-    if (I == nullptr) {
+  void GenerateCallInstructionMessage(CallInst* CallInst, std::string &msg_str) { //TODO: make simple instruction generation
+    if (CallInst == nullptr) {
       return;
     }
     llvm::raw_string_ostream call_inst_msg(msg_str); //TODO: How to use llvm:raw_ostream constructor
-    Function* called_func = I->getCalledFunction();
+    Function* called_func = CallInst->getCalledFunction();
     if (called_func == nullptr) {
       call_inst_msg << "indirect function call: " << "... call ... ";
     } else {
-      call_inst_msg << "function call: " << "... call ... "
-        << called_func->getName() << " ... ";
+      call_inst_msg << "function call: ";
+
+      if (cast<Value>(CallInst)->hasName()) {
+        call_inst_msg << cast<Value>(CallInst)->getNameOrAsOperand() << " = ... call ... " ;
+      } else {
+        call_inst_msg << "<No name>" << " ... call ... ";
+      }
+
+      call_inst_msg << called_func->getName() << " ... ";
     }
 
     msg_str = call_inst_msg.str();
@@ -87,10 +95,11 @@ struct FArgumentsInfo : public FunctionPass {
     for (auto &BB: F) {
       for (auto &I: BB) {
         if (I.getOpcode() == Instruction::Call) {
-          if (isAssumeLikeIntrinsic(cast<IntrinsicInst>(&I))) {
+          CallInst* call_inst = cast<CallInst>(&I);
+          if (isAssumeLikeIntrinsic(call_inst->getIntrinsicID()) ||
+            call_inst->isInlineAsm()) {
             continue;
           }
-          CallInst* call_inst = cast<CallInst>(&I);
           int args_amount = call_inst->arg_size();
           if (args_amount > ArgsLimit) {
             llvm::errs() << "In Function " << F.getName() << ":\n";
@@ -111,10 +120,11 @@ struct FArgumentsInfo : public FunctionPass {
     for (auto &BB: F) {
       for (auto &I: BB) {
         if (I.getOpcode() == Instruction::Call) {
-          if (isAssumeLikeIntrinsic(cast<IntrinsicInst>(&I))) {
+          CallInst* call_inst = cast<CallInst>(&I);
+          if (isAssumeLikeIntrinsic(call_inst->getIntrinsicID()) ||
+            call_inst->isInlineAsm()) {
             continue;
           }
-          CallInst* call_inst = cast<CallInst>(&I);
           int args_amount = call_inst->arg_size();
           if (args_amount > max_args_amount) {
             max_args_call_inst = call_inst;
