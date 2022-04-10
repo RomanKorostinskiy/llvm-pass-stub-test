@@ -10,9 +10,9 @@
 
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Casting.h"
+#include "llvm/IR/Type.h"
 // #include "llvm/Support/Error.h"
 #include "stdlib.h"
-// #include "sstream"
 
 using namespace llvm;
 
@@ -26,7 +26,6 @@ static cl::opt<int>
                    cl::desc("The limit of function call arguments"));
 
 namespace {
-
 bool isAssumeLikeIntrinsic(Intrinsic::ID intr_id) { //TODO: fix calling this method from the library
   switch (intr_id) {
   default: break;
@@ -63,7 +62,7 @@ struct FArgumentsInfo : public FunctionPass {
     if (max_args_amount == NO_FUNCTION_CALLS) {
       llvm::errs() << "\tNo calls in this function\n";
     } else {
-      llvm::errs() << '\t' << " Maximum arguments number " << max_args_amount
+      llvm::errs() << "\t Maximum arguments number " << max_args_amount
         << " in " << call_inst_msg << "\n";
     }
   }
@@ -74,18 +73,29 @@ struct FArgumentsInfo : public FunctionPass {
     }
     llvm::raw_string_ostream call_inst_msg(msg_str); //TODO: How to use llvm:raw_ostream constructor
     Function* called_func = CallInst->getCalledFunction();
-    if (called_func == nullptr) {
-      call_inst_msg << "indirect function call: " << "... call ... ";
+    if (CallInst->isIndirectCall()) {
+      call_inst_msg << "indirect function call: ";
+
+      // if (called_func_ret_type->isVoidTy()) {
+      //   call_inst_msg << " ... call ... ";
+      // } else {
+      //   call_inst_msg << "<SSA-value>" << " = ... <ret_type> call ... " ;
+      // }
+
+      call_inst_msg << "... call ... ";
+
     } else {
       call_inst_msg << "function call: ";
 
-      if (cast<Value>(CallInst)->hasName()) {
-        call_inst_msg << cast<Value>(CallInst)->getNameOrAsOperand() << " = ... call ... " ;
+      Type* called_func_ret_type = called_func->getReturnType();
+
+      if (called_func_ret_type->isVoidTy()) {
+        call_inst_msg << "void call ";
       } else {
-        call_inst_msg << "<No name>" << " ... call ... ";
+        call_inst_msg << "<SSA-value> " << "= ... <ret_type> call " ;
       }
 
-      call_inst_msg << called_func->getName() << " ... ";
+      call_inst_msg << called_func->getName() << "(...) ... ";
     }
 
     msg_str = call_inst_msg.str();

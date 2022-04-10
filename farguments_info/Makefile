@@ -12,7 +12,7 @@ OPT=opt-12
 LLVM_CONFIG=llvm-config-12
 LLC=llc-12
 
-CFLAGS=-O2 -Werror -Wall -pedantic -fno-inline-functions -fPIC -fno-rtti
+CFLAGS=-O0 -Werror -Wall -pedantic -fno-inline-functions -fPIC -fno-rtti
 LDLIBS=-lm
 
 # BENCH=binary_trees
