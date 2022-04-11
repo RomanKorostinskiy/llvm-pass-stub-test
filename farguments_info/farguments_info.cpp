@@ -72,7 +72,6 @@ struct FArgumentsInfo : public FunctionPass {
       return;
     }
     llvm::raw_string_ostream call_inst_msg(msg_str); //TODO: How to use llvm:raw_ostream constructor
-    Function* called_func = CallInst->getCalledFunction();
     if (CallInst->isIndirectCall()) {
       call_inst_msg << "indirect function call: ";
 
@@ -87,6 +86,7 @@ struct FArgumentsInfo : public FunctionPass {
     } else {
       call_inst_msg << "function call: ";
 
+      Function* called_func = CallInst->getCalledFunction();
       Type* called_func_ret_type = called_func->getReturnType();
 
       if (called_func_ret_type->isVoidTy()) {
@@ -95,7 +95,7 @@ struct FArgumentsInfo : public FunctionPass {
         call_inst_msg << "<SSA-value> " << "= ... <ret_type> call " ;
       }
 
-      call_inst_msg << called_func->getName() << "(...) ... ";
+      call_inst_msg << "@" << called_func->getName() << "(...) ... ";
     }
 
     msg_str = call_inst_msg.str();

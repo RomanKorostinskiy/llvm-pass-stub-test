@@ -7,7 +7,7 @@ int CheckAssumeLikeIntrinsics(int a, int i) {
 	return arr[i];
 }
 
-int main() {
+int main(void) {
 	int* arr = (int*)calloc(5, sizeof(int));
 
 	memset(arr, 0, 5 * sizeof(int));
