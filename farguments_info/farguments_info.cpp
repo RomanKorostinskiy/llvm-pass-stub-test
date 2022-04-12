@@ -3,15 +3,15 @@
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/IntrinsicInst.h"
 #include "llvm/IR/InlineAsm.h"
+#include "llvm/IR/Type.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Support/CommandLine.h"
+#include "llvm/Support/Casting.h"
+// #include "llvm/Support/Error.h"
 
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 
-#include "llvm/Support/CommandLine.h"
-#include "llvm/Support/Casting.h"
-#include "llvm/IR/Type.h"
-// #include "llvm/Support/Error.h"
 #include "stdlib.h"
 
 using namespace llvm;
@@ -53,52 +53,37 @@ struct FArgumentsInfo : public FunctionPass {
 
   FArgumentsInfo() : FunctionPass(ID) {}
 
-  void PrintLimitExceedingMessage(std::string call_inst_msg) {
-      llvm::errs() << '\t' << " Exceeding the arguments limit occured "
-      "in " << call_inst_msg << "\n";
+  void PrintLimitExceedingMessage(CallInst* CallInst) {
+    std::string str = "";
+    llvm::raw_string_ostream call_inst_msg(str); //TODO: How to use llvm:raw_ostream constructor?
+    CallInst->print(call_inst_msg);
+
+    llvm::errs() << "\t Exceeding the arguments limit occured";
+    if (CallInst->isIndirectCall()) {
+      llvm::errs() << " in indirect function call:";
+    } else {
+      llvm::errs() << " in function call:";
+    }
+    llvm::errs() << call_inst_msg.str() << "\n";
   }
 
-  void PrinMaxArgsMessage(std::string call_inst_msg, int max_args_amount) {
+  void PrintMaxArgsMessage(CallInst* CallInst, int max_args_amount) {
     if (max_args_amount == NO_FUNCTION_CALLS) {
       llvm::errs() << "\tNo calls in this function\n";
     } else {
-      llvm::errs() << "\t Maximum arguments number " << max_args_amount
-        << " in " << call_inst_msg << "\n";
-    }
-  }
+      std::string str = "";
+      llvm::raw_string_ostream call_inst_msg(str); //TODO: How to use llvm:raw_ostream constructor?
+      CallInst->print(call_inst_msg);
 
-  void GenerateCallInstructionMessage(CallInst* CallInst, std::string &msg_str) { //TODO: make simple instruction generation
-    if (CallInst == nullptr) {
-      return;
-    }
-    llvm::raw_string_ostream call_inst_msg(msg_str); //TODO: How to use llvm:raw_ostream constructor
-    if (CallInst->isIndirectCall()) {
-      call_inst_msg << "indirect function call: ";
-
-      // if (called_func_ret_type->isVoidTy()) {
-      //   call_inst_msg << " ... call ... ";
-      // } else {
-      //   call_inst_msg << "<SSA-value>" << " = ... <ret_type> call ... " ;
-      // }
-
-      call_inst_msg << "... call ... ";
-
-    } else {
-      call_inst_msg << "function call: ";
-
-      Function* called_func = CallInst->getCalledFunction();
-      Type* called_func_ret_type = called_func->getReturnType();
-
-      if (called_func_ret_type->isVoidTy()) {
-        call_inst_msg << "void call ";
-      } else {
-        call_inst_msg << "<SSA-value> " << "= ... <ret_type> call " ;
+      llvm::errs() << "\t Maximum arguments number " << max_args_amount;
+      if (CallInst->isIndirectCall()) {
+        llvm::errs() << " in indirect function call:";
       }
-
-      call_inst_msg << "@" << called_func->getName() << "(...) ... ";
+      else {
+        llvm::errs() << " in function call:";
+      }
+      llvm::errs() << call_inst_msg.str() << "\n";
     }
-
-    msg_str = call_inst_msg.str();
   }
 
   void FArgumentsLimiter(Function &F) {
@@ -113,9 +98,7 @@ struct FArgumentsInfo : public FunctionPass {
           int args_amount = call_inst->arg_size();
           if (args_amount > ArgsLimit) {
             llvm::errs() << "In Function " << F.getName() << ":\n";
-            std::string call_inst_msg;
-            GenerateCallInstructionMessage(call_inst, call_inst_msg);
-            PrintLimitExceedingMessage(call_inst_msg);
+            PrintLimitExceedingMessage(call_inst);
             return;
           }
         }
@@ -145,9 +128,7 @@ struct FArgumentsInfo : public FunctionPass {
     }
 
     llvm::errs() << "In Function " << F.getName() << ":\n";
-    std::string call_inst_msg;
-    GenerateCallInstructionMessage(max_args_call_inst, call_inst_msg);
-    PrinMaxArgsMessage(call_inst_msg, max_args_amount);
+    PrintMaxArgsMessage(max_args_call_inst, max_args_amount);
   }
 
   bool runOnFunction(Function &F) override {

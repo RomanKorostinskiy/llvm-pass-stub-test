@@ -1,25 +1,25 @@
 # Required packages:
 # Ubuntu 20.04: clang-12
 
-CC=~/llvm-project/build/bin/clang
-CXX=~/llvm-project/build/bin/clang++
-OPT=~/llvm-project/build/bin/opt
-LLVM_CONFIG=~/llvm-project/build/bin/llvm-config
-LLC=~/llvm-project/build/bin/llc
+# CC=~/llvm-project/build/bin/clang
+# CXX=~/llvm-project/build/bin/clang++
+# OPT=~/llvm-project/build/bin/opt
+# LLVM_CONFIG=~/llvm-project/build/bin/llvm-config
+# LLC=~/llvm-project/build/bin/llc
 
-# CC=clang
-# CXX=clang++-12
-# OPT=opt-12
-# LLVM_CONFIG=llvm-config-12
-# LLC=llc-12
+CC=clang
+CXX=clang++-12
+OPT=opt-12
+LLVM_CONFIG=llvm-config-12
+LLC=llc-12
 
-CFLAGS=-O0 -Werror -Wall -pedantic -fno-inline-functions -fPIC
+CFLAGS=-O2 -Werror -Wall -pedantic -fno-inline-functions -fPIC
 LDLIBS=-lm
 
-# BENCH=binary_trees
+BENCH=binary_trees
 # BENCH=intrinsics
 # BENCH=example
-BENCH=llvm_intrinsics
+# BENCH=llvm_intrinsics
 
 BENCH_PATH=../tests/$(BENCH)
 
@@ -45,7 +45,7 @@ endif
 run-bench-debug: $(BENCH_PATH).c $(PASS_NAME).so
 	$(CC) $(CFLAGS) -S -emit-llvm -o $(BENCH_PATH).orig.ll $<
 ifeq ($(ARGSLIM), NO)
-	$(OPT) -load-pass-plugin ./$(PASS_NAME).so -S -$(PASS_NAME) < $(BENCH_PATH).orig.ll > $(BENCH_PATH).ll
+	$(OPT) -enable-new-pm=0 -load-pass-plugin ./$(PASS_NAME).so -S -$(PASS_NAME) < $(BENCH_PATH).orig.ll > $(BENCH_PATH).ll
 else
 	$(OPT) -load ./$(PASS_NAME).so -S -$(PASS_NAME) --args-limit=$(ARGSLIM) < $(BENCH_PATH).orig.ll > $(BENCH_PATH).ll
 endif
@@ -54,4 +54,4 @@ endif
 clean:
 	rm -f $(BENCH_PATH) \
 	      *.so \
-	      ../tests/*.orig.ll ../tests/*.s
+	      ../tests/*.ll ../tests/*.s
