@@ -37,7 +37,7 @@ long ItemCheck(treeNode* tree)
     if (tree->left == NULL)
         return 1;
     else
-        return 1 + ItemCheck(tree->left) + ItemCheck(tree->right);
+        return 1 + ItemCheck(tree->left) + ItemCheck(tree->right);             
 } /* ItemCheck() */
 
 
