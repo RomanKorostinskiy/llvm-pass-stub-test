@@ -13,12 +13,12 @@ OPT=opt-12
 LLVM_CONFIG=llvm-config-12
 LLC=llc-12
 
-CFLAGS=-O2 -Werror -Wall -pedantic -fno-inline-functions -fPIC
+CFLAGS=-O0 -Werror -Wall -pedantic -fno-inline-functions -fPIC
 LDLIBS=-lm
 
 BENCH=binary_trees
 # BENCH=intrinsics
-# BENCH=example
+# BENCH=indirect_call
 # BENCH=llvm_intrinsics
 
 BENCH_PATH=../tests/$(BENCH)

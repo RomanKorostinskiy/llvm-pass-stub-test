@@ -48,6 +48,18 @@ bool isAssumeLikeIntrinsic(Intrinsic::ID intr_id) { //TODO: fix calling this met
   return false;
 }
 
+bool isMemIntrinsicWithIsvolatileFlag(Intrinsic::ID intr_id) {
+  switch (intr_id) {
+    default: break;
+    case Intrinsic::memset:
+    case Intrinsic::memcpy:
+    case Intrinsic::memcpy_inline:
+    case Intrinsic::memmove:
+    return true;
+  }
+  return false;
+}
+
 struct FArgumentsInfo : public FunctionPass {
   static char ID;
 
@@ -96,6 +108,9 @@ struct FArgumentsInfo : public FunctionPass {
             continue;
           }
           int args_amount = call_inst->arg_size();
+          if (isMemIntrinsicWithIsvolatileFlag(call_inst->getIntrinsicID())) {
+            args_amount--;
+          }
           if (args_amount > ArgsLimit) {
             llvm::errs() << "In Function " << F.getName() << ":\n";
             PrintLimitExceedingMessage(call_inst);
@@ -119,6 +134,9 @@ struct FArgumentsInfo : public FunctionPass {
             continue;
           }
           int args_amount = call_inst->arg_size();
+          if (isMemIntrinsicWithIsvolatileFlag(call_inst->getIntrinsicID())) {
+            args_amount--;
+          }
           if (args_amount > max_args_amount) {
             max_args_call_inst = call_inst;
             max_args_amount = args_amount;
