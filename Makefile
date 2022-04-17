@@ -16,6 +16,8 @@ LLC=llc-12
 CFLAGS=-O0 -Werror -Wall -pedantic -fno-inline-functions -fPIC
 LDLIBS=-lm
 
+IDIR=include
+
 BENCH=binary_trees
 # BENCH=intrinsics
 # BENCH=indirect_call
@@ -32,7 +34,7 @@ PASS_OBJ_PATH=obj/$(PASS_NAME)
 ARGSLIM=NO
 
 $(PASS_OBJ_PATH).so: $(PASS_PATH).cpp $(PASS_FUNC_PATH).cpp 
-	$(CXX) $(CFLAGS) `$(LLVM_CONFIG) --cxxflags` -shared -fPIC $(PASS_PATH).cpp $(PASS_FUNC_PATH).cpp -o $@
+	$(CXX) $(CFLAGS) -I$(IDIR) `$(LLVM_CONFIG) --cxxflags` -shared -fPIC $(PASS_PATH).cpp $(PASS_FUNC_PATH).cpp -o $@
 
 .PHONY: run-bench
 run-bench: $(BENCH_PATH).c $(PASS_OBJ_PATH).so
